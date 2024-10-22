@@ -40,6 +40,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '../ui/collapsible';
+import { useAuth } from '@/context/AuthContext';
 
 const general_menu = [
   {
@@ -54,6 +55,7 @@ const general_menu = [
   },
 ];
 export function AppSidebar() {
+  const {user, logout} = useAuth();
   return (
     <Sidebar collapsible={"icon"} >
       <SidebarHeader className="border-b px-6 py-4">
@@ -71,10 +73,10 @@ export function AppSidebar() {
               {general_menu.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -154,7 +156,7 @@ export function AppSidebar() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 /> {user?.email}
                   <ChevronsUpDown className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -168,7 +170,8 @@ export function AppSidebar() {
                 <DropdownMenuItem>
                   <span>Billing</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={()=>{logout()}}>
+                  
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
