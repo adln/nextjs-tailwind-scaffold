@@ -25,7 +25,7 @@ export const login = async (email, password) => {
 
     return response.data; // return the token
   } catch (error) {
-    console.error('Login error:', error.response?.data || error.message);
+    // console.error('Login error:', error.response?.data || error.message);
 
     throw error.response?.data || { message: 'An error occurred during login.' };
   }
@@ -36,7 +36,7 @@ export const loginWithGoogle = async (googleToken) => {
     const response = await api.post('/auth/login/google', { token: googleToken });
     return response.data;
   } catch (error) {
-    console.error('Google login error:', error.response?.data || error.message);
+    // console.error('Google login error:', error.response?.data || error.message);
     throw error.response?.data || { message: 'An error occurred during Google login.' };
   }
 };
@@ -47,7 +47,7 @@ export const loginWithFacebook = async (facebookToken) => {
     const response = await api.post('/auth/login/facebook', { token: facebookToken });
     return response.data;
   } catch (error) {
-    console.error('Facebook login error:', error.response?.data || error.message);
+    // console.error('Facebook login error:', error.response?.data || error.message);
     throw error.response?.data || { message: 'An error occurred during Facebook login.' };
   }
 };
@@ -64,7 +64,7 @@ export const register = async (email, password, name) => {
     });
     return response.data; // Return the user data or token
   } catch (error) {
-    console.error('Registration error:', error.response?.data || error.message);
+    // console.error('Registration error:', error.response?.data || error.message);
     throw error.response?.data || { message: 'An error occurred during registration.' };
   }
 };
@@ -75,7 +75,7 @@ export const resetPassword = async (email) => {
     const response = await api.post('/auth/reset-password', { email });
     return response.data;
   } catch (error) {
-    console.error('Password reset error:', error.response?.data || error.message);
+    // console.error('Password reset error:', error.response?.data || error.message);
     throw error.response?.data || { message: 'An error occurred during password reset.' };
   }
 };
@@ -90,7 +90,7 @@ export const fetchUserProfile = async (token) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Fetch user profile error:', error.response?.data || error.message);
+    // console.error('Fetch user profile error:', error.response?.data || error.message);
     throw error.response?.data || { message: 'An error occurred while fetching the user profile.' };
   }
 };

@@ -39,14 +39,11 @@ export const AuthProvider = ({ children }) => {
       const data = await apiLogin(email, password);
       // Token is automatically set as HTTP-only cookie in apiLogin
       await loadUserProfile(data.token); // Load user profile with the new token
-      return true;
     } catch (error) {
       toast({
-        title: 'Login failed.',
+        title: 'échec de la connexion.',
         description: error.message
       });
-      console.error('Login error:', error);
-      return false;
     }
   };
 
@@ -56,10 +53,12 @@ export const AuthProvider = ({ children }) => {
       const data = await apiRegister(email, password, name);
       // Token is automatically set as HTTP-only cookie in apiRegister
       await loadUserProfile(data.token); // Load user profile with the new token
-      return true;
+      
     } catch (error) {
-      console.error('Registration error:', error);
-      return false;
+      toast({
+        title: `Echec lors de l'enregistrement.`,
+        description: error.message
+      })
     }
   };
 

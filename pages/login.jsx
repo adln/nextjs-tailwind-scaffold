@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import axios, { formToJSON } from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,13 +10,14 @@ import Link from 'next/link';
 
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
+import { Loader } from 'lucide-react';
 
 export const Logout = () => {
   const router = useRouter();
   const logout = () => {
     localStorage.removeItem('token');
     deleteCookie('token');
-    
+
     router.push('/login');
   };
   return <Button onClick={() => logout()}>Logout</Button>;
@@ -24,8 +25,8 @@ export const Logout = () => {
 
 const Login = () => {
   const router = useRouter();
-  const {user, login} = useAuth();
-
+  const { user, login } = useAuth();
+  const [loading, setLoading] = useState(false);
   const handleGoogleLogin = () => {
     // http://localhost:3000/api/v1
     window.location.href = 'http://localhost:3000/api/v1/auth/google';
@@ -52,26 +53,31 @@ const Login = () => {
     }
   }, []);
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     const formData = new FormData(event.target);
 
     const data = formToJSON(formData);
-
-    login(data);
+    try {
+      
+      await login(data);
+    } finally{
+      setLoading(false);
+    }
   };
 
   return (
     <Card className="max-w-sm mx-auto mt-12">
       <CardHeader>
-        <CardTitle>Connexion</CardTitle>
+        <CardTitle data-testid="title">Connexion</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <Label>Username</Label>
             <Input
-              
+              data-testid="email-input"
               name="email"
               placeholder="Username or Email"
               className="border rounded-sm px-3 py-1"
@@ -80,14 +86,20 @@ const Login = () => {
           <div className="flex flex-col gap-1">
             <Label>Password</Label>
             <Input
-              
+              data-testid="password-input"
               name="password"
               type="password"
               placeholder="Enter your password"
               className="border rounded-sm px-3 py-1"
             />
           </div>
-          <Button>Connexion</Button>
+          <Button data-testid="submit-button">
+            {loading ? (
+              <Loader className="animate-spin" data-testid="loader-icon" />
+            ) : (
+              'Connexion'
+            )}
+          </Button>
         </form>
         <div className="text-center my-3">OR</div>
         <div className="flex flex-col gap-3">
