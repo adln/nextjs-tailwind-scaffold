@@ -12,17 +12,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import { Loader } from 'lucide-react';
 
-export const Logout = () => {
-  const router = useRouter();
-  const logout = () => {
-    localStorage.removeItem('token');
-    deleteCookie('token');
-
-    router.push('/login');
-  };
-  return <Button onClick={() => logout()}>Logout</Button>;
-};
-
 const Login = () => {
   const router = useRouter();
   const { user, login } = useAuth();
@@ -60,9 +49,8 @@ const Login = () => {
 
     const data = formToJSON(formData);
     try {
-      
       await login(data);
-    } finally{
+    } finally {
       setLoading(false);
     }
   };

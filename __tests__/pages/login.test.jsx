@@ -29,6 +29,8 @@ describe('Login page', () => {
     expect(screen.getByTestId('email-input')).toBeInTheDocument();
     expect(screen.getByTestId('password-input')).toBeInTheDocument();
     expect(screen.getByTestId('submit-button')).toBeInTheDocument();
+    expect(screen.getByTestId('submit-button')).toHaveTextContent('Connexion');
+    
   });
 
 

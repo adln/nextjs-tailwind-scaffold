@@ -37,7 +37,7 @@ describe('AuthContext', () => {
     jest.clearAllMocks();
   });
 
-  test('should initialize with default values', () => {
+  test('if initialize with default values', () => {
     render(
       <AuthProvider>
         <TestComponent />
@@ -48,7 +48,7 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('loading')).toHaveTextContent('Loaded');
   });
 
-  test('should log in successfully', async () => {
+  it('should log in successfully', async () => {
     const mockUser = { name: 'Test User', email: 'test@example.com' };
     api.login.mockResolvedValueOnce({ token: 'mockToken' });
     api.fetchUserProfile.mockResolvedValueOnce(mockUser);
@@ -69,7 +69,7 @@ describe('AuthContext', () => {
   });
 
   test('should handle login failure', async () => {
-    api.login.mockRejectedValueOnce(new Error('Login failure.'));
+    api.login.mockRejectedValueOnce(new Error('échec de la connexion.'));
 
     render(
       <AuthProvider>
@@ -82,7 +82,7 @@ describe('AuthContext', () => {
       screen.getByText('Login').click(); // Simulate login
     });
   
-    expect(toast).toHaveBeenCalledWith({description: "Login failure.", title: "échec de la connexion."});
+    expect(toast).toHaveBeenCalledWith({description: "échec de la connexion.", title: "échec de la connexion."});
 
   });
  
@@ -118,7 +118,7 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('user')).toHaveTextContent('Test User');
   });
   test('should handle registration failure', async () => {
-    api.register.mockRejectedValueOnce(new Error('Registration failure.'));
+    api.register.mockRejectedValueOnce(new Error(`Echec lors de l'enregistrement.`));
 
     render(
       <AuthProvider>
@@ -131,7 +131,7 @@ describe('AuthContext', () => {
       screen.getByText('Register').click(); // Simulate login
     });
   
-    expect(toast).toHaveBeenCalledWith({description: "Registration failure.", title: "Echec lors de l'enregistrement."});
+    expect(toast).toHaveBeenCalledWith({description: "Echec lors de l'enregistrement.", title: "Echec lors de l'enregistrement."});
 
   });
 

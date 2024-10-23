@@ -5,9 +5,18 @@ import { toast } from '@/hooks/use-toast';
 
 const AuthContext = createContext();
 
+const handleError = (error, defaultMessage) => {
+  const message = error?.response?.data?.message || defaultMessage;
+  toast({
+    title: defaultMessage,
+    description: message,
+  });
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // To handle loading state
+  const [token, setToken] = useState(null);
 
   // Function to load user profile from the token
   const loadUserProfile = async (token) => {
@@ -25,8 +34,8 @@ export const AuthProvider = ({ children }) => {
   // Check for token and load user profile when component mounts
   useEffect(() => {
     const token = Cookies.get('token'); // Get token from the cookie
-
     if (token) {
+      setToken(token);
       loadUserProfile(token); // Load user profile if token exists
     } else {
       setLoading(false); // No token, just set loading to false
@@ -38,12 +47,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await apiLogin(email, password);
       // Token is automatically set as HTTP-only cookie in apiLogin
+      setToken(data.token);
       await loadUserProfile(data.token); // Load user profile with the new token
+      
     } catch (error) {
-      toast({
-        title: 'échec de la connexion.',
-        description: error.message
-      });
+      handleError(error, 'échec de la connexion.');
     }
   };
 
@@ -52,19 +60,19 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await apiRegister(email, password, name);
       // Token is automatically set as HTTP-only cookie in apiRegister
+      setToken(data.token)
       await loadUserProfile(data.token); // Load user profile with the new token
       
     } catch (error) {
-      toast({
-        title: `Echec lors de l'enregistrement.`,
-        description: error.message
-      })
+      handleError(error, `Echec lors de l'enregistrement.`);
+      
     }
   };
 
   // Logout function
   const logout = async () => {
     setUser(null);
+    setToken(null);
     Cookies.remove('token', { path: '/' }); // Remove the token cookie
   };
 
