@@ -17,7 +17,7 @@ export default function Layout({ children }) {
 
           <div className='flex-1 bg-secondary/10 p-6'>
             <Card>
-              <CardHeader><CardTitle>{pageTitle}</CardTitle></CardHeader>
+              <CardHeader><CardTitle data-testid="main-title">{pageTitle}</CardTitle></CardHeader>
               <CardContent>
                 {children}
               </CardContent>
