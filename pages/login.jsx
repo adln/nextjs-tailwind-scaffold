@@ -27,7 +27,7 @@ const Login = () => {
       localStorage.setItem('token', token);
       setCookie('token', token);
       // Redirect to dashboard
-      router.push('/dashboard');
+      router.push('/');
     } catch (error) {
       console.error('Error logging:', error);
     }
@@ -93,6 +93,7 @@ const Login = () => {
         <div className="flex flex-col gap-3">
           <Button
             variant="secondary"
+
             className="bg-slate-50 shadow-md border w-full px-3 py-1 flex gap-3 items-center justify-center"
             onClick={handleGoogleLogin}
           >
