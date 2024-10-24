@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 
-const authRoutes = ['/login', '/register', '/forgot-password'];
+const authRoutes = ['/login', '/signup', '/forgot-password'];
 
 const useRouteGuard = () => {
   const { user, loading } = useAuth();
