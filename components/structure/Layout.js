@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 export default function Layout({ children }) {
   const pageTitle = children.type?.title || 'Default Title';
-  console.log(pageTitle)
+
   return (
     <>
       <SidebarProvider>
