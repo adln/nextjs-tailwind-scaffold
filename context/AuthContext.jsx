@@ -1,15 +1,20 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useAuthService } from '../services/auth';
-import Cookies from 'js-cookie'; // Use only on the client-side
+import { createContext, useState, useEffect, useContext } from 'react';
+
 import { toast } from '@/hooks/use-toast';
 import { getSession, signIn, signOut } from 'next-auth/react';
+import { useAPI } from '@/hooks/use-api';
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
 const handleError = (_error, defaultMessage) => {
   let error = _error;
-  if(typeof error === "string") error = JSON.parse(error);
-  
+  try {
+    error = JSON.parse(error);
+  } catch (error) {
+    defaultMessage = error;
+  }
+
   const title = error?.title || defaultMessage;
   const message = error?.message || defaultMessage;
   toast({
@@ -19,20 +24,15 @@ const handleError = (_error, defaultMessage) => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const {
-    // login: apiLogin,
-    fetchUserProfile,
-    register: apiRegister,
-  } = useAuthService();
+  const api = useAPI();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // To handle loading state
-  
 
   // Function to load user profile from the token
-  const loadUserProfile = async (token) => {
+  const loadUserProfile = async () => {
     try {
-      const profile = await fetchUserProfile(token);
-      console.log(token);
+      const profile = await api.get('/auth/me');
+      console.log('Users profile', profile);
       setUser(profile);
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
     const fetchSession = async () => {
       const session = await getSession();
       if (session && session.accessToken) {
-        loadUserProfile(session.accessToken);
+        loadUserProfile();
       } else {
         setLoading(false);
       }
@@ -59,10 +59,14 @@ export const AuthProvider = ({ children }) => {
   // Login function
   const login = async ({ email, password }) => {
     try {
-      const result = await signIn('credentials', { email, password, redirect: false });
-      if (result.error) {        
-        handleError(result.error, 'Echec de la connexion.')
-      }else{
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+      if (result.error) {
+        handleError(result.error, 'Echec de la connexion.');
+      } else {
         // Token is automatically set as HTTP-only cookie in apiLogin
         await loadUserProfile(result.token); // Load user profile with the new token
       }
@@ -73,19 +77,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Registration function
-  const register = async (email, password, name) => {
+  const register = async (formData) => {
     try {
-      const data = await apiRegister(email, password, name);
-      await loadUserProfile(data.token); // Load user profile with the new token
+      const data = await api.post('/auth/signup', formData);
+      const { token } = data;
+      console.log(token);
+      await signIn('credentials', {
+        email: formData.credentials.email,
+        password: formData.credentials.password,
+        redirect: false, // We handle redirection manually
+      });
+      // TODO add accessToken to next-auth
+      await loadUserProfile();
     } catch (error) {
-      handleError(error, `Echec lors de l'enregistrement.`);
+      console.log('here', error);
+      // handleError(error, `Echec lors de l'enregistrement.`);
     }
   };
 
   // Logout function
   const logout = async () => {
     setUser(null);
-    signOut({redirect: false})
+    signOut({ redirect: false });
   };
 
   // Return loading state and authentication methods
