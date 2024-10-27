@@ -92,7 +92,8 @@ const createUserProfile = (account, profile) => {
     return {
       credentials: {
         email: profile.email,
-        google_id: profile.sub,
+        googleId: profile.sub,
+        provider: account.provider
       },
       profile: {
         firstname: profile.given_name,
@@ -106,7 +107,8 @@ const createUserProfile = (account, profile) => {
     return {
       credentials: {
         email: profile.email,
-        facebook_id: profile.id,
+        facebookId: profile.id,
+        provider: account.provider
       },
       profile: {
         firstname: profile.name.split(' ')[0],
