@@ -17,19 +17,26 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { apiServerSide, getToken } from '@/lib/api';
 import { Edit, Trash2 } from 'lucide-react';
+import moment from 'moment';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 function Utilisateurs({ utilisateurs = [] }) {
+  const router = useRouter();
+  const [order, setOrder] = useState(-1);
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>First name</TableHead>
-          <TableHead>Last name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Created At</TableHead>
+          <TableHead column="profile.firstname" order={-1}>
+            First name
+          </TableHead>
+          <TableHead column="profile.lastname">Last name</TableHead>
+          <TableHead column="credentials.email">Email</TableHead>
+          <TableHead column="createdAt">Created At</TableHead>
           <TableHead className="w-auto">Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -40,11 +47,15 @@ function Utilisateurs({ utilisateurs = [] }) {
           </TableRow>
         ) : (
           utilisateurs.map((utilisateur) => (
-            <TableRow key={utilisateur.id}>
+            <TableRow key={utilisateur._id}>
               <TableCell>{utilisateur.profile?.firstname}</TableCell>
               <TableCell>{utilisateur.profile?.lastname}</TableCell>
-              <TableCell>{utilisateur.credentials.email}</TableCell>
-              <TableCell>{utilisateur.createdAt}</TableCell>
+              <TableCell>{utilisateur.credentials?.email}</TableCell>
+              <TableCell className="capitalize">
+                {moment(utilisateur.createdAt).format('HH:mm:ss')}
+                <br />
+                {moment(utilisateur.createdAt).format('dddd DD-MM-YYYY')}
+              </TableCell>
               <TableCell className="w-auto">
                 <div className="flex gap-2 ">
                   <Button asChild variant="link" size="icon">
@@ -55,7 +66,7 @@ function Utilisateurs({ utilisateurs = [] }) {
                       <Edit role="img" />
                     </Link>
                   </Button>
-                  <ActionDetele utilisateur={utilisateur} />
+                  <ActionDelete utilisateur={utilisateur} />
                 </div>
               </TableCell>
             </TableRow>
@@ -69,26 +80,32 @@ Utilisateurs.title = 'Utilisateurs';
 export default Utilisateurs;
 
 export const getServerSideProps = async (context) => {
-  return {
-    props: {
-      utilisateurs: [
-        {
-          id: 1,
-          profile: {
-            firstname: 'Adlen',
-            lastname: 'Gharbi',
-          },
-          credentials: {
-            email: 'adlen025@gmail.com',
-          },
-          createdAt: '25-05-2024',
-        },
-      ],
-    },
-  };
+  const token = getToken(context);
+  const { sort, order } = context.query;
+
+  try {
+    const api = apiServerSide(token);
+    const utilisateurs = await api.get('/users', {
+      params: {
+        sort: sort || 'firstname', 
+        order: order || 'asc', 
+      },
+    });
+    return {
+      props: {
+        utilisateurs: utilisateurs.data,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        error: 'Failed to fetch data',
+      },
+    };
+  }
 };
 
-const ActionDetele = ({ utilisateur }) => {
+const ActionDelete = ({ utilisateur }) => {
   const [open, setOpen] = useState(false);
   const onConfirm = () => {
     alert('Supprimé avec succés.');
@@ -110,7 +127,7 @@ const ActionDetele = ({ utilisateur }) => {
         <DialogHeader>
           <DialogTitle>
             Etes vous sure de vouloir supprimer l'utilisateur{' '}
-            {utilisateur.profile.firstname} {utilisateur.profile.lastname}
+            {utilisateur.profile?.firstname} {utilisateur.profile?.lastname}
           </DialogTitle>
           <DialogDescription>Cette action est irrévérsible.</DialogDescription>
         </DialogHeader>
