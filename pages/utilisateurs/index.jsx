@@ -25,8 +25,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 function Utilisateurs({ utilisateurs = [] }) {
-  const router = useRouter();
-  const [order, setOrder] = useState(-1);
+  
   return (
     <Table>
       <TableHeader>
@@ -77,16 +76,18 @@ function Utilisateurs({ utilisateurs = [] }) {
   );
 }
 Utilisateurs.title = 'Utilisateurs';
+Utilisateurs.has_search = true;
 export default Utilisateurs;
 
 export const getServerSideProps = async (context) => {
   const token = getToken(context);
-  const { sort, order } = context.query;
+  const { sort, order, q } = context.query;
 
   try {
     const api = apiServerSide(token);
     const utilisateurs = await api.get('/users', {
       params: {
+        ...(q ? {search: q} : null),
         sort: sort || 'firstname', 
         order: order || 'asc', 
       },
