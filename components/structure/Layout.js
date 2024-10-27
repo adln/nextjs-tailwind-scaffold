@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 export default function Layout({ children }) {
   const pageTitle = children.type?.title || 'Default Title';
   const hasSearch = children.type?.has_search || false;
+  const { action_bar: ActionBar } = children.type;
   const router = useRouter();
   return (
     <>
@@ -21,13 +22,14 @@ export default function Layout({ children }) {
           <div className='flex-1 bg-secondary/10 p-6'>
             <Card>
               <CardHeader>
-                <CardTitle data-testid="main-title" className="flex items-center">
+                <CardTitle data-testid="main-title" className="flex items-center gap-6">
                   {pageTitle}
                   {hasSearch && <Input className="ml-auto max-w-48" onChange={({ target }) => router.push({
                     query: {
                       ...(target.value ? { q: target.value } : null)
                     }
                   })} placeholder="Recherche..." />}
+                  {children.type?.action_bar ? <ActionBar /> : null}
                 </CardTitle>
               </CardHeader>
               <CardContent>
