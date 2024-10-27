@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
       setUser(profile);
     } catch (error) {
       console.error('Error fetching user profile:', error);
-      setUser(null); // Reset user on error
+      logout();
     } finally {
       setLoading(false); // Set loading to false when done
     }
@@ -82,11 +82,13 @@ export const AuthProvider = ({ children }) => {
       const data = await api.post('/auth/signup', formData);
       const { token } = data;
       console.log(token);
-      await signIn('credentials', {
+      const response = await signIn('credentials', {
         email: formData.credentials.email,
         password: formData.credentials.password,
         redirect: false, // We handle redirection manually
       });
+      
+      console.log(response);
       // TODO add accessToken to next-auth
       await loadUserProfile();
     } catch (error) {
