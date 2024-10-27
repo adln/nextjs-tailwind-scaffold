@@ -41,6 +41,8 @@ import {
   CollapsibleTrigger,
 } from '../ui/collapsible';
 import { useAuth } from '@/context/AuthContext';
+import { useEffect, useState } from 'react';
+import { useAPI } from '@/hooks/use-api';
 
 const general_menu = [
   {
@@ -55,7 +57,24 @@ const general_menu = [
   },
 ];
 export function AppSidebar() {
+  const api = useAPI();
   const {user, logout} = useAuth();
+  const [counts, setCounts] = useState({
+    "/utilisateurs": 0
+  });
+
+  useEffect(()=>{
+    loadCounts();
+  },[])
+
+  const loadCounts = async ()=>{
+    const users = await api.head('/users');
+    
+    setCounts({
+      ...counts,
+      "/utilisateurs": users['x-total-count']
+    });
+  }
   return (
     <Sidebar collapsible={"icon"} >
       <SidebarHeader className="border-b px-6 py-4">
@@ -76,6 +95,7 @@ export function AppSidebar() {
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
+                      <SidebarMenuBadge>{counts[item.url]}</SidebarMenuBadge>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -101,6 +121,7 @@ export function AppSidebar() {
                         <a href={item.url}>
                           <item.icon className="mr-2 h-4 w-4"/>
                           <span>{item.title}</span>
+                          
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -132,7 +153,7 @@ export function AppSidebar() {
                         <SidebarMenuSubButton asChild>
                           <Link href={'/orders'}>
                             Liste des commandes{' '}
-                            <SidebarMenuBadge>24</SidebarMenuBadge>
+                            <SidebarMenuBadge>{counts.users}</SidebarMenuBadge>
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>

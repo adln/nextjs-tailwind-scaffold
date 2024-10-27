@@ -22,6 +22,16 @@ export const useAPI = () => {
       throw error.response?.data || { message: 'An error occurred during GET request.' };
     }
   };
+  const head = async (url, options = {}) => {
+    try {
+      await attachTokenToRequest(); // Attach token before making the request
+      const response = await axiosInstance.head(url, options);
+      return response.headers;
+    } catch (error) {
+      handleError(error);
+      throw error.response?.data || { message: 'An error occurred during GET request.' };
+    }
+  };
 
   const post = async (url, data, options = {}) => {
     try {
@@ -45,5 +55,5 @@ export const useAPI = () => {
     console.error('API Error:', error);
   };
 
-  return { get, post };
+  return { get, head, post };
 };
