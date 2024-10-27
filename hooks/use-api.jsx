@@ -35,9 +35,10 @@ export const useAPI = () => {
   };
 
   const handleError = (error) => {
+    const errorTitle = error.response?.data?.title || 'Erreur';
     const errorMessage = error.response?.data?.message || 'An unexpected error occurred.';
     toast({
-      title: 'Error',
+      title: errorTitle,
       description: errorMessage,
       variant: 'destructive',
     });
