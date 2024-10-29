@@ -28,8 +28,9 @@ export const useAPI = () => {
       const response = await axiosInstance.head(url, options);
       return response.headers;
     } catch (error) {
+      console.log(error);
       handleError(error);
-      throw error.response?.data || { message: 'An error occurred during GET request.' };
+      throw error.response?.data || { message: 'An error occurred during head request.' };
     }
   };
 
