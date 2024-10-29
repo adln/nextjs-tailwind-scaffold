@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   // Function to load user profile from the token
   const loadUserProfile = async () => {
     try {
-      const profile = await api.get('/auth/me');
+      const profile = await api.get('/api/v1/auth/me');
       console.log('Users profile', profile);
       setUser(profile);
     } catch (error) {
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }) => {
   // Registration function
   const register = async (formData) => {
     try {
-      const data = await api.post('/auth/signup', formData);
+      const data = await api.post('/api/v1/auth/signup', formData);
       const { token } = data;
       console.log(token);
       const response = await signIn('credentials', {
