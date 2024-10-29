@@ -59,7 +59,7 @@ function Utilisateurs({ utilisateurs = [] }) {
                 <div className="flex gap-2 ">
                   <Button asChild variant="link" size="icon">
                     <Link
-                      href={`/utilisateurs/${utilisateur.id}`}
+                      href={`/utilisateurs/${utilisateur._id}`}
                       data-testid="edit-button"
                     >
                       <Edit role="img" />
@@ -85,7 +85,7 @@ export const getServerSideProps = async (context) => {
 
   try {
     const api = apiServerSide(token);
-    const utilisateurs = await api.get('/users', {
+    const utilisateurs = await api.get('/api/v1/users', {
       params: {
         ...(q ? {search: q} : null),
         sort: sort || 'firstname', 

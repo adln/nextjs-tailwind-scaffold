@@ -13,7 +13,7 @@ export default NextAuth({
 
         const api = apiServerSide();
         try {
-          const response = await api.post('/auth/login', credentials);
+          const response = await api.post('/api/v1/auth/login', credentials);
 
           if (response.data?.token) {
             const { token } = response.data;
@@ -48,7 +48,7 @@ export default NextAuth({
       const userProfile = createUserProfile(account, profile);
       if (userProfile) {
         try {
-          const response = await api.post('/auth/social-media', userProfile);
+          const response = await api.post('/api/v1/auth/social-media', userProfile);
           const token = response.data.token;
 
           if (token) {
